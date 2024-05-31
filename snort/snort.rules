@@ -1,0 +1,17 @@
+# $Id: local.rules,v 1.11 2004/07/23 20:15:44 bmc Exp $
+# ----------------
+# LOCAL RULES
+# ----------------
+# This file intentionally does not come with signatures.  Put your local
+# additions here.
+#alert tcp any any -> $HOME_NET 21 (msg:"FTP connection attempt"; sid:1000001; rev:1;)
+
+#ICMP Test
+log icmp any any -> any any (msg: "ICMP Testing Rule"; sid:1000001; rev:1;)
+
+#SYN Flood
+alert tcp any any -> $HOME_NET any (flags: S; msg:"SYN DDoS Attempt!"; threshold: type both, track by_dst, count 30, seconds 10; sid:110001;rev:1;)
+#UDP Flood
+alert udp any any -> $HOME_NET any (msg:"UDP DDoS Attempt!"; threshold: type both, track by_dst, count 30, seconds 10; sid:110002;rev:1;)
+#ICMP Flood
+alert icmp any any -> $HOME_NET any (msg:"ICMP DDoS Attempt!"; threshold: type both, track by_dst, count 30, seconds 10; sid:110003;rev:1;)

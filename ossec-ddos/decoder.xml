@@ -1,0 +1,45 @@
+
+<decoder name="ipt">
+    <program_name>^kernel</program_name>
+  </decoder>
+  
+  
+  <decoder name="ipt-icmp">
+    <parent>ipt</parent>
+    <prematch_pcre2>.+\[ipT4] ICMP</prematch_pcre2>
+    <pcre2>.+SRC=(\S+).+PROTO=(\S+)</pcre2>
+    <order>srcip,protocol</order>
+  </decoder>
+  
+  <!-- TCP, UDP -->
+  <decoder name="ipt-main">
+    <parent>ipt</parent>
+    <prematch_pcre2>.+\[ipT4]</prematch_pcre2>
+    <pcre2>.+SRC=(\S+).+PROTO=(\S+).+DPT=(\S+)</pcre2>
+    <order>srcip,protocol,dstport</order>
+  </decoder>
+  
+  
+  
+  <!-- IPLOG -->
+  <decoder name="ipl-icmp-flood">
+    <program_name>ICMP</program_name>
+    <prematch_pcre2>ping flood detected from</prematch_pcre2>
+    <pcre2 offset="after_prematch">(\S+)</pcre2>
+    <order>srcip</order>
+  </decoder>
+  
+  
+  <decoder name="ipl-tcp-flood">
+    <program_name>TCP</program_name>
+    <prematch_pcre2>^([A-Z]+) scan detected</prematch_pcre2>
+    <pcre2>([A-Z]+).+port\s(\d+).+from (\S+)</pcre2>
+    <order>protocol,dstport,srcip</order>
+  </decoder>
+  
+  <decoder name="ipl-udp-flood">
+    <program_name>UDP</program_name>
+    <prematch_pcre2>^scan\/flood detected</prematch_pcre2>
+    <pcre2 offset="after_prematch">.+port\s(\d+).+from (\S+)</pcre2>
+    <order>dstport,srcip</order>
+  </decoder>
